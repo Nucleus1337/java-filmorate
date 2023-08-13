@@ -13,7 +13,6 @@ import java.util.*;
 @Slf4j
 public class FilmController {
     private final Map<Long, Film> idToFilms = new HashMap<>();
-    private final List<Film> films = new ArrayList<>();
 
     @PostMapping
     public Film add(@Valid @RequestBody Film film) {
