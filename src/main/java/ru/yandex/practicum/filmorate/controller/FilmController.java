@@ -6,15 +6,14 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.util.FilmSequence;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/films")
 @Slf4j
 public class FilmController {
     private final Map<Long, Film> idToFilms = new HashMap<>();
+    private final List<Film> films = new ArrayList<>();
 
     @PostMapping
     public Film add(@Valid @RequestBody Film film) {
@@ -45,12 +44,12 @@ public class FilmController {
     }
 
     @GetMapping
-    public Map<Long, Film> findAll() {
+    public List<Film> findAll() {
         log.info("Возвращаем всех пользователей");
 
-        if (idToFilms.size() == 0) return Collections.emptyMap();
+        if (idToFilms.size() == 0) return Collections.emptyList();
 
-        return idToFilms;
+        return new ArrayList<>(idToFilms.values());
     }
 
     class FilmIsAlreadyExistsException extends RuntimeException {

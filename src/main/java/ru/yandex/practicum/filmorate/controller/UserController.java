@@ -6,9 +6,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.util.UserSequence;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -17,12 +15,12 @@ public class UserController {
     private final Map<Long, User> idToUser = new HashMap<>();
 
     @GetMapping
-    public Map<Long, User> findAll() {
+    public List<User> findAll() {
         log.info("Возвращаем всех пользователей");
 
-        if (idToUser.size() == 0) return Collections.emptyMap();
+        if (idToUser.size() == 0) return Collections.emptyList();
 
-        return idToUser;
+        return new ArrayList<>(idToUser.values());
     }
 
     @PostMapping
