@@ -19,7 +19,7 @@ public class FilmController {
 
     @PostMapping
     @PutMapping
-    public Film update(@Valid @RequestBody Film film){
+    public Film update(@Valid @RequestBody Film film) {
         idToFilms.put(film.getId(), film);
 
         return film;
