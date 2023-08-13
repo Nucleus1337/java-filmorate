@@ -20,22 +20,16 @@ public class FilmControllerTest {
 
     @Test
     public void shouldCreateNewFilm() throws Exception {
-//        testRestTemplate.postForObject();
         String json = "{\n" +
                 "  \"name\": \"nisi eiusmod\",\n" +
                 "  \"description\": \"adipisicing\",\n" +
                 "  \"releaseDate\": \"1967-03-25\",\n" +
                 "  \"duration\": 100\n" +
                 "}";
+
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/films")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                         .andExpect(status().isOk());
-
-//        mvc.perform(post("http://localhost:8080/api/v1/films")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(json))
-//                .andDo(print())
-//                .andExpect(status().isOk());
     }
 }

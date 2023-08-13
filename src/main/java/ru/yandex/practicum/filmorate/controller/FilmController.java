@@ -1,15 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.util.FilmSequence;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,10 +17,14 @@ public class FilmController {
     private final Map<Long, Film> idToFilms = new HashMap<>();
 
     @PostMapping
-    public Film add(@Valid @RequestBody Film film) throws FilmIsAlreadyExistsException {
-        if (idToFilms.containsKey(film.getId())) {
+    public Film add(@Valid @RequestBody Film film) {
+        long id = FilmSequence.getNextId();
+
+        if (film.getId() == null) {
+            film.setId(id);
+        } else if (idToFilms.containsKey(film.getId())) {
             log.error(String.format("Фильм с id=%s уже существует", film.getId()));
-            throw new FilmIsAlreadyExistsException(String.format("Фильм с id=%s уже существует", film.getId()));
+            throw new FilmIsAlreadyExistsException(String.format("Пользователь с id=%s уже существует", film.getId()));
         }
 
         idToFilms.put(film.getId(), film);
@@ -32,7 +33,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) throws FilmIsAlreadyExistsException {
+    public Film update(@Valid @RequestBody Film film) {
         if (idToFilms.containsKey(film.getId())) {
             idToFilms.put(film.getId(), film);
         } else {
@@ -45,10 +46,14 @@ public class FilmController {
 
     @GetMapping
     public Map<Long, Film> findAll() {
+        log.info("Возвращаем всех пользователей");
+
+        if (idToFilms.size() == 0) return Collections.emptyMap();
+
         return idToFilms;
     }
 
-    class FilmIsAlreadyExistsException extends Exception {
+    class FilmIsAlreadyExistsException extends RuntimeException {
         public FilmIsAlreadyExistsException(String error) {
             super(error);
         }

@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import ru.yandex.practicum.filmorate.annotation.ValidReleaseDate;
 
 import javax.validation.constraints.NotBlank;
@@ -10,9 +10,9 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
 public class Film {
-    @NonNull
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Не может быть пустым")
     private String name;
@@ -25,12 +25,4 @@ public class Film {
 
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private long duration;
-
-    public Film(long id, String name, String description, LocalDate releaseDate, long duration) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-    }
 }
