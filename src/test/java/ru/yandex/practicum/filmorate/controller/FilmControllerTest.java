@@ -27,7 +27,7 @@ public class FilmControllerTest {
                 "  \"duration\": 100\n" +
                 "}";
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/api/v1/films")
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/films")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                         .andExpect(status().isOk());
