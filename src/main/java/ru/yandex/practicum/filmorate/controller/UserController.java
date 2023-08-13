@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
-@RequestMapping(value = "/api/v1/users")
+@RequestMapping(value = "/users")
 @Slf4j
 public class UserController {
     private final Map<Long, User> idToUser = new HashMap<>();
