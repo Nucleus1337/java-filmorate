@@ -16,6 +16,6 @@ public class FilmReleaseDateValidator implements ConstraintValidator<ValidReleas
     @Override
     public boolean isValid(LocalDate releaseDate, ConstraintValidatorContext constraintValidatorContext) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return releaseDate.isAfter(LocalDate.parse("1885-12-28", formatter));
+        return releaseDate.isAfter(LocalDate.parse("1895-12-28", formatter));
     }
 }

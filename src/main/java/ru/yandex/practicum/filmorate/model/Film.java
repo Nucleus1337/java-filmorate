@@ -28,7 +28,7 @@ public class Film {
     private long duration;
 
     public Film(long id, String name, String description, LocalDate releaseDate, long duration) {
-        this.id = Sequence.getNextId();
+        this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;

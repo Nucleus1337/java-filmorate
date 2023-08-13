@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
+@RequestMapping(value = "/api/v1/users")
 @Slf4j
 public class UserController {
     private final Map<Long, User> idToUser = new HashMap<>();
@@ -26,16 +26,30 @@ public class UserController {
     }
 
     @PostMapping
-    @PutMapping
     public User add(@Valid @RequestBody User user) {
-        if (idToUser.containsKey(user.getId())) {
-            log.info("Обновляем данные пользователя с id={}", user.getId());
-        } else {
-            log.info("Сохраняем нового пользователя {}", user);
-        }
-
+        log.info("Сохраняем нового пользователя {}", user);
         idToUser.put(user.getId(), user);
 
         return user;
+    }
+
+    @PutMapping
+    public User update(@Valid @RequestBody User user) {
+        log.info("Обновляем данные пользователя с id={}", user.getId());
+
+        if (idToUser.containsKey(user.getId())) {
+            idToUser.put(user.getId(), user);
+        } else {
+            log.warn("Пользователь с id={} не существует", user.getId());
+            throw new UserUpdateException(String.format("Пользователя с id=%s не существует", user.getId()));
+        }
+
+        return user;
+    }
+
+    class UserUpdateException extends RuntimeException {
+        public UserUpdateException(String error) {
+            super(error);
+        }
     }
 }

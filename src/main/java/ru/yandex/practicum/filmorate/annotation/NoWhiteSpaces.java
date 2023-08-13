@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.annotation;
 
-import ru.yandex.practicum.filmorate.validator.FilmReleaseDateValidator;
+import ru.yandex.practicum.filmorate.validator.NoWhiteSpacesValidator;
 
 import javax.validation.Constraint;
 import java.lang.annotation.Documented;
@@ -10,11 +10,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = FilmReleaseDateValidator.class)
-@Target({ElementType.FIELD})
+@Constraint(validatedBy = NoWhiteSpacesValidator.class)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidReleaseDate {
-    String message() default "Дата релиза не может быть больше 28 декабря 1895 года";
+public @interface NoWhiteSpaces {
+    String message() default "Не может быть пробелов";
 
     Class[] groups() default {};
 

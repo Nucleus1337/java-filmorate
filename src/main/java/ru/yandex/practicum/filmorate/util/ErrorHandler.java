@@ -14,7 +14,7 @@ import javax.validation.ConstraintViolationException;
 
 @ControllerAdvice
 @Slf4j
-class ValidationErrorHandler {
+class ErrorHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -22,7 +22,7 @@ class ValidationErrorHandler {
     ValidationErrorResponse getConstraintValidationException(ConstraintViolationException e) {
         ValidationErrorResponse error = new ValidationErrorResponse();
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
-            error.getErrors().add(new ValidationError(violation.getPropertyPath().toString(), violation.getMessage()));
+            error.getValidationErrors().add(new ValidationError(violation.getPropertyPath().toString(), violation.getMessage()));
 
             log.error("Validation error: " + violation.getPropertyPath().toString() + ": " + violation.getMessage());
         }
@@ -35,10 +35,17 @@ class ValidationErrorHandler {
     ValidationErrorResponse getMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         ValidationErrorResponse error = new ValidationErrorResponse();
         for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            error.getErrors().add(new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()));
+            error.getValidationErrors().add(new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()));
 
             log.error("Validation error: " + fieldError.getField() + ": " + fieldError.getDefaultMessage());
         }
         return error;
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    String getException(Exception e) {
+        return String.format("{\"error\": \"%s\"}", e.getMessage());
     }
 }

@@ -7,5 +7,5 @@ import java.util.List;
 
 @Data
 public class ValidationErrorResponse {
-    private final List<ValidationError> errors = new ArrayList<>();
+    private final List<ValidationError> validationErrors = new ArrayList<>();
 }
