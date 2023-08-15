@@ -6,7 +6,12 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.util.FilmSequence;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static ru.yandex.practicum.filmorate.exception.CustomExceptions.FilmException;
 
 @RestController
 @RequestMapping(value = "/films")
@@ -51,11 +56,5 @@ public class FilmController {
         log.info("Возвращаем все фильмы. Общее количество: {}", idToFilms.size());
 
         return new ArrayList<>(idToFilms.values());
-    }
-
-    class FilmException extends RuntimeException {
-        public FilmException(String error) {
-            super(error);
-        }
     }
 }

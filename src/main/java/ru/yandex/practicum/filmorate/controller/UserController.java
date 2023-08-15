@@ -6,7 +6,12 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.util.UserSequence;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static ru.yandex.practicum.filmorate.exception.CustomExceptions.UserException;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -56,11 +61,5 @@ public class UserController {
         idToUser.put(user.getId(), user);
 
         return user;
-    }
-
-    class UserException extends RuntimeException {
-        public UserException(String error) {
-            super(error);
-        }
     }
 }
