@@ -20,39 +20,41 @@ public class FilmController {
 
         if (film.getId() == null) {
             film.setId(id);
-        } else if (idToFilms.containsKey(film.getId())) {
-            log.error(String.format("Фильм с id=%s уже существует", film.getId()));
-            throw new FilmIsAlreadyExistsException(String.format("Пользователь с id=%s уже существует", film.getId()));
+        }
+
+        if (idToFilms.containsKey(film.getId())) {
+            log.error("Фильм с id={} уже существует", film.getId());
+            throw new FilmException(String.format("Пользователь с id=%s уже существует", film.getId()));
         }
 
         idToFilms.put(film.getId(), film);
+        log.info("Сохраняем новый фильм {}", film);
 
         return film;
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        if (idToFilms.containsKey(film.getId())) {
-            idToFilms.put(film.getId(), film);
-        } else {
-            log.error(String.format("Фильм с id=%s не существует", film.getId()));
-            throw new FilmIsAlreadyExistsException(String.format("Фильм с id=%s не существует", film.getId()));
+        if (!idToFilms.containsKey(film.getId())) {
+            log.error("Фильм с id={} не существует", film.getId());
+            throw new FilmException(String.format("Фильм с id=%s не существует", film.getId()));
         }
+
+        idToFilms.put(film.getId(), film);
+        log.info("Обновляем фильм {}", film);
 
         return film;
     }
 
     @GetMapping
     public List<Film> findAll() {
-        log.info("Возвращаем всех пользователей");
-
-        if (idToFilms.size() == 0) return Collections.emptyList();
+        log.info("Возвращаем все фильмы. Общее количество: {}", idToFilms.size());
 
         return new ArrayList<>(idToFilms.values());
     }
 
-    class FilmIsAlreadyExistsException extends RuntimeException {
-        public FilmIsAlreadyExistsException(String error) {
+    class FilmException extends RuntimeException {
+        public FilmException(String error) {
             super(error);
         }
     }

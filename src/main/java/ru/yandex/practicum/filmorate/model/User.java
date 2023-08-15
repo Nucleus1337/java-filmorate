@@ -19,7 +19,7 @@ public class User {
     private String email;
 
     @NotBlank(message = "login не может быть пустым")
-    @NoWhiteSpaces
+    @NoWhiteSpaces //проверяет, что нет пробелов в середине
     private String login;
 
     private String name;

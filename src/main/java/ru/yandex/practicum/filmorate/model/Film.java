@@ -17,7 +17,7 @@ public class Film {
     @NotBlank(message = "Не может быть пустым")
     private String name;
 
-    @Size(max = 200, message = "Максимальная длинна 200 символов")
+    @Size(min = 10, max = 200, message = "Максимальная длинна 200 символов")
     private String description;
 
     @ValidReleaseDate

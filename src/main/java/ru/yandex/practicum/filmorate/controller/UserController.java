@@ -16,9 +16,7 @@ public class UserController {
 
     @GetMapping
     public List<User> findAll() {
-        log.info("Возвращаем всех пользователей");
-
-        if (idToUser.size() == 0) return Collections.emptyList();
+        log.info("Возвращаем всех пользователей. Общее количество: {}", idToUser.size());
 
         return new ArrayList<>(idToUser.values());
     }
@@ -29,13 +27,17 @@ public class UserController {
 
         if (user.getId() == null) {
             user.setId(id);
-        } else if (idToUser.containsKey(user.getId())) {
-            throw new UserUpdateException(String.format("Пользователь с id=%s уже существует", user.getId()));
+        }
+
+        if (idToUser.containsKey(user.getId())) {
+            throw new UserException(String.format("Пользователь с id=%s уже существует", user.getId()));
         }
 
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
+
+        user.setLogin(user.getLogin().trim());
 
         log.info("Сохраняем нового пользователя {}", user);
         idToUser.put(user.getId(), user);
@@ -45,19 +47,19 @@ public class UserController {
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        if (idToUser.containsKey(user.getId())) {
-            log.info("Обновляем данные пользователя с id={}", user.getId());
-            idToUser.put(user.getId(), user);
-        } else {
+        if (!idToUser.containsKey(user.getId())) {
             log.warn("Пользователь с id={} не существует", user.getId());
-            throw new UserUpdateException(String.format("Пользователя с id=%s не существует", user.getId()));
+            throw new UserException(String.format("Пользователя с id=%s не существует", user.getId()));
         }
+
+        log.info("Обновляем данные пользователя с id={}", user.getId());
+        idToUser.put(user.getId(), user);
 
         return user;
     }
 
-    class UserUpdateException extends RuntimeException {
-        public UserUpdateException(String error) {
+    class UserException extends RuntimeException {
+        public UserException(String error) {
             super(error);
         }
     }
