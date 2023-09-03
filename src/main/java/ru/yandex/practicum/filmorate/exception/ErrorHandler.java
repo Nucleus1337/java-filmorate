@@ -16,36 +16,58 @@ import javax.validation.ConstraintViolationException;
 @Slf4j
 class ErrorHandler {
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    ValidationErrorResponse getConstraintValidationException(ConstraintViolationException e) {
-        ValidationErrorResponse error = new ValidationErrorResponse();
-        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
-            error.getValidationErrors().add(new ValidationError(violation.getPropertyPath().toString(), violation.getMessage()));
+  @ExceptionHandler(ConstraintViolationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  ErrorResponseList getConstraintValidationException(ConstraintViolationException e) {
+    ErrorResponseList error = new ErrorResponseList();
+    for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+      error
+          .getErrorResponses()
+          .add(new ErrorResponse(violation.getPropertyPath().toString(), violation.getMessage()));
 
-            log.error("Validation error: " + violation.getPropertyPath().toString() + ": " + violation.getMessage());
-        }
-        return error;
+      log.error(
+          "ConstraintValidation error: {} - {}",
+          violation.getPropertyPath().toString(),
+          violation.getMessage());
     }
+    return error;
+  }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    ValidationErrorResponse getMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        ValidationErrorResponse error = new ValidationErrorResponse();
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            error.getValidationErrors().add(new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()));
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  ErrorResponseList getMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    ErrorResponseList error = new ErrorResponseList();
+    for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+      error
+          .getErrorResponses()
+          .add(new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()));
 
-            log.error("Validation error: " + fieldError.getField() + ": " + fieldError.getDefaultMessage());
-        }
-        return error;
+      log.error(
+          "MethodArgumentNotValid error: {} - {}",
+          fieldError.getField(),
+          fieldError.getDefaultMessage());
     }
+    return error;
+  }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    String getException(Exception e) {
-        return String.format("{\"error\": \"%s\"}", e.getMessage());
-    }
+  @ExceptionHandler({
+    CustomExceptions.UserDoesNotExistsException.class,
+    CustomExceptions.FilmDoesNotExistsException.class
+  })
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  ErrorResponse getModelException(RuntimeException e) {
+    log.error("Объект не найден: {}", e.getMessage());
+    return new ErrorResponse("Объект не найден", e.getMessage());
+  }
+
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  ErrorResponse getInternalException(Exception e) {
+    log.error("Внутренняя ошибка: {}", e.getMessage());
+    return new ErrorResponse("Внутренняя ошибка", e.getMessage());
+  }
 }
