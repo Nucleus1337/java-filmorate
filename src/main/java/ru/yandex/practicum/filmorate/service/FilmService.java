@@ -115,14 +115,11 @@ public class FilmService {
   }
 
   public List<Film> getPopular(String filmsCount) {
-    List<Film> films = filmStorage.findAll();
     long count = Long.parseLong(filmsCount);
 
     Comparator<Film> comparator =
-        Comparator.comparing(x -> x.getLikes().size(), Comparator.reverseOrder());
+            Comparator.comparing(x -> x.getLikes().size(), Comparator.reverseOrder());
 
-    films.sort(comparator);
-
-    return films.stream().limit(count).collect(Collectors.toList());
+    return filmStorage.findAll().stream().limit(count).sorted(comparator).collect(Collectors.toList());
   }
 }
