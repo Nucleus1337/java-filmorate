@@ -120,6 +120,6 @@ public class FilmService {
     Comparator<Film> comparator =
             Comparator.comparing(x -> x.getLikes().size(), Comparator.reverseOrder());
 
-    return filmStorage.findAll().stream().limit(count).sorted(comparator).collect(Collectors.toList());
+    return filmStorage.findAll().stream().sorted(comparator).limit(count).collect(Collectors.toList());
   }
 }
