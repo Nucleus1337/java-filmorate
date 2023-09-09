@@ -12,6 +12,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
+  private static long id = 1;
   private final Map<Long, User> idToUser = new HashMap<>();
 
   @Override
@@ -40,5 +41,10 @@ public class InMemoryUserStorage implements UserStorage {
   @Override
   public User findById(Long id) {
     return idToUser.get(id);
+  }
+
+  @Override
+  public long getNextId() {
+    return id++;
   }
 }

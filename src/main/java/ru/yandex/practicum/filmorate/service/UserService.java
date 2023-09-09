@@ -25,7 +25,7 @@ public class UserService {
   }
 
   public User add(User user) {
-    long id = UserSequence.getNextId();
+    long id = userStorage.getNextId();
 
     if (user.getId() == null) {
       user.setId(id);
@@ -134,18 +134,19 @@ public class UserService {
   }
 
   public List<User> getMutualFriends(Long userId, Long otherUserId) {
-    List<User> mutualFriends = new ArrayList<>();
+//    List<User> mutualFriends = new ArrayList<>();
 
     User user = getUser(userId);
     User otherUser = getUser(otherUserId);
 
     if (user.getFriends() == null || otherUser.getFriends() == null) return new ArrayList<>();
 
-    user.getFriends().stream()
+    return user.getFriends().stream()
         .filter(id -> otherUser.getFriends().stream().anyMatch(otherId -> otherId.equals(id)))
-        .collect(Collectors.toList())
-        .forEach(id -> mutualFriends.add(userStorage.findById(id)));
+        .map(userStorage::findById)
+        .collect(Collectors.toList());
+    //        .forEach(id -> mutualFriends.add(userStorage.findById(id)));
 
-    return mutualFriends;
+//    return mutualFriends;
   }
 }

@@ -35,7 +35,7 @@ public class FilmService {
   }
 
   public Film add(Film film) {
-    long id = FilmSequence.getNextId();
+    long id = filmStorage.getNextId();
 
     if (film.getId() == null) {
       film.setId(id);
