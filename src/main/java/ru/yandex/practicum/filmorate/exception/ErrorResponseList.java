@@ -6,6 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class ValidationErrorResponse {
-    private final List<ValidationError> validationErrors = new ArrayList<>();
+public class ErrorResponseList {
+  private final List<ErrorResponse> errorResponses = new ArrayList<>();
 }
