@@ -132,8 +132,6 @@ public class UserService {
   }
 
   public List<User> getMutualFriends(Long userId, Long otherUserId) {
-//    List<User> mutualFriends = new ArrayList<>();
-
     User user = getUser(userId);
     User otherUser = getUser(otherUserId);
 
@@ -143,8 +141,5 @@ public class UserService {
         .filter(id -> otherUser.getFriends().stream().anyMatch(otherId -> otherId.equals(id)))
         .map(userStorage::findById)
         .collect(Collectors.toList());
-    //        .forEach(id -> mutualFriends.add(userStorage.findById(id)));
-
-//    return mutualFriends;
   }
 }
