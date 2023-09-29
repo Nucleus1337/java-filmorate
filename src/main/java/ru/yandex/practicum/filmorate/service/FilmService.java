@@ -37,7 +37,7 @@ public class FilmService {
       film.setLikes(new HashSet<>());
     }
 
-    if(film.getGenres() == null) {
+    if (film.getGenres() == null) {
       film.setGenres(new HashSet<>());
     }
 
