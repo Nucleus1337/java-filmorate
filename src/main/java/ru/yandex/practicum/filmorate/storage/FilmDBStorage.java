@@ -18,16 +18,12 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.MpaService;
 
 @Component("filmDBStorage")
 @RequiredArgsConstructor
 public class FilmDBStorage implements FilmStorage {
   private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private final JdbcTemplate jdbcTemplate;
-  private final MpaService mpaService;
-  private final GenreService genreService;
 
   @Override
   public Film add(Film film) {
@@ -122,30 +118,11 @@ public class FilmDBStorage implements FilmStorage {
   @Override
   public List<Film> findAll() {
     List<Film> films = new ArrayList<>();
-    List<Mpa> mpas = mpaService.findAll();
-    List<Genre> genres = genreService.findAll();
 
     SqlRowSet rs = jdbcTemplate.queryForRowSet("select * from film");
 
     while (rs.next()) {
       films.add(findById(rs.getLong("id")));
-      //      Mpa mpa = null;
-      //      Optional<Mpa> mpaOptional =
-      //          mpas.stream().filter(m -> m.getId() == rs.getLong("id")).findFirst();
-      //
-      //      if (mpaOptional.isPresent()) mpa = mpaOptional.get();
-      //
-      //      films.add(
-      //          new Film(
-      //              rs.getLong("id"),
-      //              rs.getString("name"),
-      //              rs.getString("description"),
-      //              LocalDate.parse(Objects.requireNonNull(rs.getString("release_date")),
-      // FORMATTER),
-      //              rs.getLong("duration"),
-      //              new HashSet<>(),
-      //              mpa,
-      //              new HashSet<>()));
     }
 
     return films;
