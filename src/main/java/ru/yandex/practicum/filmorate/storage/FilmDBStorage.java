@@ -22,7 +22,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 @Component("filmDBStorage")
 @RequiredArgsConstructor
 public class FilmDBStorage implements FilmStorage {
-  private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private final JdbcTemplate jdbcTemplate;
 
   @Override
@@ -153,7 +153,7 @@ public class FilmDBStorage implements FilmStorage {
           id,
           rsFilm.getString("name"),
           rsFilm.getString("description"),
-          LocalDate.parse(Objects.requireNonNull(rsFilm.getString("release_date")), FORMATTER),
+          LocalDate.parse(Objects.requireNonNull(rsFilm.getString("release_date")), formatter),
           rsFilm.getLong("duration"),
           new HashSet<>(likes),
           mpas.get(0),

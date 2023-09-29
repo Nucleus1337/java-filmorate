@@ -15,7 +15,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 @Component("userDBStorage")
 public class UserDBStorage implements UserStorage {
-  private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private final JdbcTemplate jdbcTemplate;
 
   public UserDBStorage(JdbcTemplate jdbcTemplate) {
@@ -90,7 +90,7 @@ public class UserDBStorage implements UserStorage {
               rs.getString("email"),
               rs.getString("login"),
               rs.getString("name"),
-              LocalDate.parse(Objects.requireNonNull(rs.getString("birthday")), FORMATTER),
+              LocalDate.parse(Objects.requireNonNull(rs.getString("birthday")), formatter),
               new HashSet<>(friends));
         });
   }
@@ -110,7 +110,7 @@ public class UserDBStorage implements UserStorage {
           rsUser.getString("email"),
           rsUser.getString("login"),
           rsUser.getString("name"),
-          LocalDate.parse(Objects.requireNonNull(rsUser.getString("birthday")), FORMATTER),
+          LocalDate.parse(Objects.requireNonNull(rsUser.getString("birthday")), formatter),
           new HashSet<>(friends));
     } else {
       return null;
