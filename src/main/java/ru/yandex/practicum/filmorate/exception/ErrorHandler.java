@@ -54,7 +54,9 @@ class ErrorHandler {
 
   @ExceptionHandler({
     CustomExceptions.UserDoesNotExistsException.class,
-    CustomExceptions.FilmDoesNotExistsException.class
+    CustomExceptions.FilmDoesNotExistsException.class,
+    CustomExceptions.MpaDoesNotExistsException.class,
+    CustomExceptions.GenreDoesNotExistsException.class
   })
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
