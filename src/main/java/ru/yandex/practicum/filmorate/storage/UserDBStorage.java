@@ -3,9 +3,13 @@ package ru.yandex.practicum.filmorate.storage;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -72,32 +76,40 @@ public class UserDBStorage implements UserStorage {
     jdbcTemplate.update("delete from \"USER\" where id = ?", id);
   }
 
+  private User makeUserWithFriends(SqlRowSet rs, List<Long> friends) {
+    return new User(
+        rs.getLong("id"),
+        rs.getString("email"),
+        rs.getString("login"),
+        rs.getString("name"),
+        LocalDate.parse(Objects.requireNonNull(rs.getString("birthday")), formatter),
+        new HashSet<>(friends));
+  }
+
   @Override
   public List<User> findAll() {
-    return jdbcTemplate.query(
-        "select * from \"USER\"",
-        (rs, rowNum) -> {
-          String friendsQuery =
-              String.format(
-                  "select friend_id from friends where user_id = %s and confirm = true",
-                  rs.getLong("id"));
-          List<Long> friends =
-              jdbcTemplate.query(
-                  friendsQuery, (friendsSet, friendsRowNum) -> friendsSet.getLong(1));
+    List<User> allUsers = new ArrayList<>();
+    SqlRowSet rowSet = jdbcTemplate.queryForRowSet("select * from \"USER\"");
+    List<Friends> allFriends =
+        jdbcTemplate.query(
+            "select user_id, friend_id from friends",
+            (rs, rownum) -> new Friends(rs.getLong(1), rs.getLong(2)));
 
-          return new User(
-              rs.getLong("id"),
-              rs.getString("email"),
-              rs.getString("login"),
-              rs.getString("name"),
-              LocalDate.parse(Objects.requireNonNull(rs.getString("birthday")), formatter),
-              new HashSet<>(friends));
-        });
+    while (rowSet.next()) {
+      List<Long> friends =
+          allFriends.stream()
+              .filter(x -> x.userId == rowSet.getLong("id"))
+              .map(Friends::getFriendId)
+              .collect(Collectors.toList());
+
+      allUsers.add(makeUserWithFriends(rowSet, friends));
+    }
+
+    return allUsers;
   }
 
   @Override
   public User findById(Long id) {
-
     SqlRowSet rsUser = jdbcTemplate.queryForRowSet("select * from \"USER\" where id = ?", id);
 
     if (rsUser.next()) {
@@ -105,20 +117,16 @@ public class UserDBStorage implements UserStorage {
           String.format("select friend_id from friends where user_id = %s and confirm = true", id);
       List<Long> friends = jdbcTemplate.query(friendsQuery, (rs, rowNum) -> rs.getLong(1));
 
-      return new User(
-          rsUser.getLong("id"),
-          rsUser.getString("email"),
-          rsUser.getString("login"),
-          rsUser.getString("name"),
-          LocalDate.parse(Objects.requireNonNull(rsUser.getString("birthday")), formatter),
-          new HashSet<>(friends));
+      return makeUserWithFriends(rsUser, friends);
     } else {
       return null;
     }
   }
 
-  @Override
-  public long getNextId() {
-    return 0;
+  @Data
+  @AllArgsConstructor
+  private static class Friends {
+    Long userId;
+    Long friendId;
   }
 }
