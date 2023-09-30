@@ -13,6 +13,4 @@ public interface UserStorage {
   List<User> findAll();
 
   User findById(Long id);
-
-  long getNextId();
 }

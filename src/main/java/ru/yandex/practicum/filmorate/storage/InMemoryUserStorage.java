@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-@Component
+@Component("inMemoryUserStorage")
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-  private static long id = 1;
+  private static final long id = 1;
   private final Map<Long, User> idToUser = new HashMap<>();
 
   @Override
@@ -40,10 +40,5 @@ public class InMemoryUserStorage implements UserStorage {
   @Override
   public User findById(Long id) {
     return idToUser.get(id);
-  }
-
-  @Override
-  public long getNextId() {
-    return id++;
   }
 }
